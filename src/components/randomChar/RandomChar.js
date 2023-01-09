@@ -13,6 +13,8 @@ class RandomChar extends Component {
         error: false,
 
     }
+    marvelService = new MarvelService;
+
     componentDidMount(){
         this.randomChar();
     }
@@ -32,7 +34,7 @@ class RandomChar extends Component {
         })
     }
 
-    marvelService = new MarvelService;
+
     randomChar=()=>{
 
         const id = Math.floor(Math.random()* (1011400-1011000) + 1011000);
