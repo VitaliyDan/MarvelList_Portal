@@ -44,7 +44,7 @@ class RandomChar extends Component {
          .catch(this.onError);
     }
 componentWillUnmount(){
-    this.randomChar();x
+    this.randomChar();
 }
     render(){
         const {char , loading, error} = this.state;
