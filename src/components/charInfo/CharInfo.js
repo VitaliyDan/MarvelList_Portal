@@ -1,123 +1,82 @@
-import { Component } from 'react';
-import MarvelService from '../../services/MarvelService';
+import { useState, useEffect } from 'react';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../../resources/img/Spinner';
 import ErrorMassage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton'
 import './charInfo.scss';
 
 
-class CharInfo extends Component {
+const CharInfo = (props) => {
+    const [char, setChar] = useState(null);
+    const {error,loading, getCharacter} = useMarvelService();
 
-    state = {
-        char: null,
-        loading: false,
-        error: false
-    }
+    useEffect(() => {
+        updateChar()
+    }, [props.onCharId])
 
-    marvelService = new MarvelService();
-
-    componentDidMount() {
-        this.updateChar();
-    }
-
-    componentDidUpdate(prevProps){
-        if (this.props.onCharId !== prevProps.onCharId) {
-            this.updateChar();
-        }
-    }
-
-    updateChar = () => {
-        const {onCharId} = this.props;
-        if (!onCharId) {
+    const updateChar = () => {
+        if (!props.onCharId) {
             return;
         }
-
-        this.onCharLoading();
-
-        this.marvelService
-            .getCharacter(onCharId)
-            .then(this.onCharLoaded)
-            .catch(this.onError);
+        getCharacter(props.onCharId)
+        .then(char=> setChar(char))
     }
 
-    onCharLoaded = (char) => {
-        this.setState({
-            char, 
-            loading: false
-        })
-    }
-
-    onCharLoading = () => {
-        this.setState({
-            loading: true
-        })
-    }
-
-    onError = () => {
-        this.setState({
-            loading: false,
-            error: true
-        })
-    }
-    render (){
-        const {char, loading, error} = this.state
-        const skeleton = char || loading || error ? null : <Skeleton/>;
-        const errorMessage = error ? <ErrorMassage/> : null;
-        const spinner = loading ? <Spinner/> : null;
-        const content = !(loading || error || !char) ? <Viev char ={char}/> : null;
-        return (
-            <div className="char__info">
-                {skeleton}
-                {errorMessage}
-                {spinner}
-                {content}
-            </div>
-        )
-    }
+    const skeleton = char || loading || error ? null : <Skeleton />;
+    const errorMessage = error ? <ErrorMassage /> : null;
+    const spinner = loading ? <Spinner /> : null;
+    const content = !(loading || error || !char) ? <Viev char={char} /> : null;
+    return (
+        <div className="char__info">
+            {skeleton}
+            {errorMessage}
+            {spinner}
+            {content}
+        </div>
+    )
 }
-
-const Viev =({char})=> {
-    const {name, description, thumbnail, homepage, wiki, comics} = char;
-    let imgStyle = {'objectFit' : 'cover'};
+const Viev = ({ char }) => {
+    const { name, description, thumbnail, homepage, wiki, comics } = char;
+    let imgStyle = { 'objectFit': 'cover' };
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
-        imgStyle = {'objectFit' : 'unset'};
+        imgStyle = { 'objectFit': 'unset' };
     }
-    return(
+    return (
         <>
-        <div className="char__basics">
-                        <img src={thumbnail} alt={name} style={imgStyle}/>
-                        <div>
-                            <div className="char__info-name">{name}</div>
-                            <div className="char__btns">
-                                <a href={homepage} className="button button__main">
-                                    <div className="inner">homepage</div>
-                                </a>
-                                <a href={wiki} className="button button__secondary">
-                                    <div className="inner">Wiki</div>
-                                </a>
-                            </div>
-                        </div>
+            <div className="char__basics">
+                <img src={thumbnail} alt={name} style={imgStyle} />
+                <div>
+                    <div className="char__info-name">{name}</div>
+                    <div className="char__btns">
+                        <a href={homepage} className="button button__main">
+                            <div className="inner">homepage</div>
+                        </a>
+                        <a href={wiki} className="button button__secondary">
+                            <div className="inner">Wiki</div>
+                        </a>
                     </div>
-                    <div className="char__descr">
-                        {description} 
-                    </div>
-                    <div className="char__comics">Comics:</div>
-                    <ul className="char__comics-list">
-                        {comics.length <1 ? 'Not Found' : null }
-                        {
-                            comics.map((item, i)=>{
-                                while(i <10){
-                                    return(
-                                        <li key={i} className="char__comics-item">
-                                             {item.name}
-                                        </li>  
-                                    )
-                                }
-                            })
+                </div>
+            </div>
+            <div className="char__descr">
+                {description}
+            </div>
+            <div className="char__comics">Comics:</div>
+            <ul className="char__comics-list">
+                {comics.length < 1 ? 'Not Found' : null}
+                {
+                    comics.map((item, i) => {
+                        while (i < 10) {
+                            return (
+                                <li key={i} className="char__comics-item">
+                                    {item.name}
+                                </li>
+                            )
                         }
+                    })
+                }
 
-                    </ul>
-    </>
+            </ul>
+        </>
     )
 }
 
