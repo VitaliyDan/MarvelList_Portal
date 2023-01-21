@@ -51,7 +51,7 @@ const CharList = (props) => {
                 <li
                     className="char__item"
                     ref={item => itemRefs.current[i] = item}
-                    key={item.id}
+                    key={i}
                     onClick={() => {
                         props.onCharSelected(item.id);
                         focusOnItem(i);
@@ -68,7 +68,6 @@ const CharList = (props) => {
             )
 
         });
-
         return (
             <ul className="char__grid">
                 {items}
