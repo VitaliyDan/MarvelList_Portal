@@ -2,8 +2,9 @@ import { useState } from "react";
 import AppHeader from "../appHeader/AppHeader";
 import RandomChar from "../randomChar/RandomChar";
 import CharList from "../charList/CharList";
+import ComicsList from "../comicsList/ComicsList";
 import CharInfo from "../charInfo/CharInfo";
-
+import AppBanner from "../appBanner/AppBanner"
 import decoration from '../../resources/img/vision.png';
 
 const App = () => {
@@ -16,12 +17,14 @@ const App = () => {
             <div className="app">
                 <AppHeader />
                 <main>
-                    <RandomChar />
+                    {/* <RandomChar />
                     <div className="char__content">
                         <CharList onCharSelected={onCharSelected} />
                         <CharInfo onCharId={selectCharacter} />
                     </div>
-                    <img className="bg-decoration" src={decoration} alt="vision" />
+                    <img className="bg-decoration" src={decoration} alt="vision" /> */}
+                    <AppBanner/>
+                    <ComicsList/>
                 </main>
             </div>
         )
