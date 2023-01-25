@@ -5,6 +5,7 @@
     grid-template-columns: repeat(2, 50%);
     align-items: center;
     box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.25);
+    background-image: linear-gradient(to right, #8a282d, #8d2b49, #863663, #784479, #645189, #50598e, #3c608e, #2d658a, #296780, #306776, #3b676c, #476664);
     &__block {
         padding: 40px 35px;
         display: grid;
