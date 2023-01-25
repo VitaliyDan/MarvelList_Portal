@@ -1,9 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../../resources/img/Spinner';
-import ErrorMassage from '../errorMessage/ErrorMessage';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 import './comicsList.scss';
+
+
+const setContent = (process, Component, newItemLoading) => {
+    switch (process) {
+        case 'waiting':
+            return <Spinner/>;
+        case 'loading':
+            return newItemLoading ? <Component/> : <Spinner/>;
+        case 'confirmed':
+            return <Component/>;
+        case 'error':
+            return <ErrorMessage/>;
+        default:
+            throw new Error('Unexpected process state');
+    }
+}
 
 const ComicsList = () => {
     const [comicsList, setComicsList] = useState([]);
@@ -11,7 +27,9 @@ const ComicsList = () => {
     const [loadingItems, setLoadingItems] = useState(false);
     const [endList, setEndList] = useState(false);
 
-    const {error, loading, getAllComics} = useMarvelService();
+    const {error, loading, getAllComics, process, setProcess} = useMarvelService();
+
+
 
     useEffect(() => {
         onReqest(offsetComics, true);
@@ -20,7 +38,8 @@ const ComicsList = () => {
     const onReqest = (offset, init) => {
     init ?  setLoadingItems(false) :  setLoadingItems(true);
             getAllComics(offset)
-            .then(onComicsLoaded);
+            .then(onComicsLoaded)
+            .then(()=> setProcess('confirmed'));
     }
 
     const onComicsLoaded = (newComicsList) => {
@@ -57,15 +76,12 @@ const ComicsList = () => {
             </ul>
         )
     }
-
-    const items = renderComicsItems(comicsList);
-    const errorMessage = error ? <ErrorMassage/> : null;
-    const spinner = loading && !loadingItems ? <Spinner /> : null;
+    const elements = useMemo(() => {
+        return setContent(process, () => renderComicsItems(comicsList), loadingItems);
+    }, [process])
     return (
         <div className="comics__list">
-            {errorMessage}
-            {spinner}
-            {items}
+            {elements}
             <button
              className="button button__main button__long"
              disabled={loadingItems}
